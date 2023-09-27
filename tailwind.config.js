@@ -22,6 +22,7 @@ export default {
             black: "#000",
             grey: "#e6e6e6",
             green: "#1CD97E",
+            transparent: "transparent"
         },
         extend: {},
     },

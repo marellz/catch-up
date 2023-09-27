@@ -14,7 +14,7 @@ class TaskController extends Controller
     public function index()
     {
         //
-        $tasks = Task::all();
+        $tasks = Task::orderBy('complete')->get();
         return view('welcome', ['tasks' => $tasks]);
     }
 
@@ -42,6 +42,7 @@ class TaskController extends Controller
 
         $request->merge([
             'task_status_id' => 1,
+            'due_date' => now()->addMinutes($request->duration ?? 60)
         ]);
         $query = $request->only([
             'name',
