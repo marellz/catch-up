@@ -28,17 +28,18 @@
                                     <span class="text-red mt-1 text-sm">{{ $errors->first('name') }}</span>
                                 @endif
                             </div>
+
                             <div class="flex flex-col">
                                 <label for="task-duration" class="mb-2">Duration</label>
-                                <select id="task-duration" class="p-2 w-full border bg-white border-grey rounded"
-                                    name="duration">
-                                    <option value="10">10 minutes</option>
-                                    <option value="20">20 minutes</option>
-                                    <option value="30">30 minutes</option>
-                                    <option value="45">45 minutes</option>
-                                    <option value="60">1 hour</option>
-                                    <option value="120">2 hours</option>
-                                </select>
+                                <div class="flex border border-grey rounded overflow-hidden">
+                                    <input type="number" id="task-duration" name="duration_number" value="10" class="p-2 flex-none w-1/2" />
+                                    <select id="task-duration" class="p-2 border-l bg-white border-grey flex-auto"
+                                        name="duration_units" value="minutes">
+                                        <option value="1">minutes</option>
+                                        <option value="60">hours</option>
+                                        <option value="1440">days</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="flex flex-col">
                                 <label for="task-due" class="mb-2">Due date</label>
@@ -46,6 +47,26 @@
                                     value="{{ now()->addDay() }}" id="task-due" />
                             </div>
 
+                            <div class="flex flex-col col-span-2">
+                                <label class="mb-2">Category</label>
+
+                                <div class="flex flex-wrap">
+
+                                    @foreach ($categories as $option)
+                                        <div class="mb-2 mr-2">
+                                            <input type="checkbox" name="categories[]"
+                                                id="task-category-{{ $option->id }}" value={{ $option->id }} />
+                                            <label for="task-category-{{ $option->id }}">{{ $option->name }}</label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                {{-- <select id="task-category" class="p-2 w-full border bg-white border-grey rounded">
+                                    <option value="null">none</option>
+                                    <option value={{ $option->id }}>
+                                        {{$option->name}}
+                                    </option>
+                                </select> --}}
+                            </div>
                             <div class="flex flex-col col-span-2">
                                 <label for="task-description" class="mb-2">Description</label>
                                 <textarea class="p-2 w-full border border-grey rounded" name="description" id="task-description"></textarea>
@@ -75,8 +96,14 @@
                         <div
                             class="bg-white shadow p-5 rounded border-l-4 {{ $task->complete ? 'border-green opacity-50' : 'border-light-blue' }} ">
                             <div class="flex items-start xl:items-center">
-                                <div class="flex flex-col xl:flex-row xl:items-center flex-auto">
-                                    <h1 class="text-xl font-medium">{{ $task->name }}</h1>
+                                <div class="flex flex-col xl:flex-row items-start xl:items-center xl:flex-auto">
+                                    <div class="flex space-x-3 items-center">
+                                        <h1 class="text-xl font-medium">{{ $task->name }}</h1>
+                                        <span
+                                            class="inline-flex items-center pb-0.5 px-3 text-sm bg-dark-blue text-white rounded-full">{{ $task->taskStatus->name }}
+                                        </span>
+
+                                    </div>
                                     <div class="flex space-x-4 mt-2 xl:ml-4 xl:mt-0">
                                         <div class="inline-flex items-center space-x-2 text-blue-alt">
                                             {{-- clock --}}
@@ -140,8 +167,18 @@
                                 </div>
 
                             </div>
+                            @if (count($task->categories))
+                                <div class="py-1 flex flex-wrap">
+                                    @foreach ($task->categories as $category)
+                                        <span
+                                            class="px-3 mb-2 mr-2 text-sm bg-light text-green rounded-full font-medium border-dark-blue">
+                                            {{ $category->category_id }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            @endif
                             <div>
-                                <p class="opacity-50 pt-5">
+                                <p class="opacity-50 pt-2">
                                     {{ $task->description ?? 'No description' }}
                                 </p>
                             </div>
@@ -169,21 +206,30 @@
                             </div>
                         </div>
                         <div class="flex space-x-2 mt-2 opacity-40 hover:opacity-100">
-                            <button class="p-1 border border-transparent rounded hover:border hover:border-blue-alt hover:text-blue-alt">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                                </svg>
-
-                            </button>
-                            <button class="p-1 border border-transparent rounded hover:text-red hover:border-red">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                </svg>
-                            </button>
+                            <form action="{{ route('tasks.update', $task->id) }}" method="POST">
+                                @method('patch')
+                                @csrf
+                                <input type="hidden" name="complete" value="0" />
+                                <button
+                                    class="p-1 border border-transparent rounded hover:border hover:border-blue-alt hover:text-blue-alt">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                    </svg>
+                                </button>
+                            </form>
+                            <form action="{{ route('tasks.destroy', $task->id) }}" method="POST">
+                                @method('delete')
+                                @csrf
+                                <button class="p-1 border border-transparent rounded hover:text-red hover:border-red">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </button>
+                            </form>
 
                         </div>
                     </div>

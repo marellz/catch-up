@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\task\Task;
+use App\Models\task\TaskCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -14,8 +16,13 @@ class TaskController extends Controller
     public function index()
     {
         //
+
         $tasks = Task::orderBy('complete')->get();
-        return view('welcome', ['tasks' => $tasks]);
+        $categories = Category::all();
+        return view('welcome', [
+            'tasks' => $tasks,
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -31,19 +38,27 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) : RedirectResponse
+    public function store(Request $request)
     {
         //
+
+
 
         $request->validate([
             'name' => 'required|string',
             'description' => 'string|nullable',
+            'duration_number' => 'nullable|integer',
+            'duration_units' => 'nullable|integer'
         ]);
+
+        $duration = $request->duration_number * $request->duration_units;
 
         $request->merge([
             'task_status_id' => 1,
-            'due_date' => now()->addMinutes($request->duration ?? 60)
+            'due_date' => now()->addMinutes($duration ?? 60),
+            'duration' => $duration,
         ]);
+
         $query = $request->only([
             'name',
             'description',
@@ -54,7 +69,16 @@ class TaskController extends Controller
 
         // return response($query);
 
-        Task::create($query);
+        $task = Task::create($query);
+
+        if ($request->has('categories')) {
+            foreach ($request->categories as $category) {
+                TaskCategory::create([
+                    'task_id' => $task->id,
+                    'category_id' => $category,
+                ]);
+            }
+        }
 
         return redirect()->route('tasks');
     }
@@ -82,8 +106,18 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         //
+        if($request->has('complete')){
+            $complete = !!$request->complete;
+            $taskStatus = $complete ? 3 : 2;
+        } else {
+            $taskStatus = $task->task_status_id;
+        }
 
-        $task->update(['complete' => $request->complete]);
+        $task->update([
+            'complete' => $request->complete, 
+            'task_status_id' => $taskStatus
+        ]);
+
         return redirect()->route('tasks');
     }
 

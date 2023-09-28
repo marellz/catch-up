@@ -17,4 +17,15 @@ class Task extends Model
         "complete",
         "task_status_id",
     ];
+
+
+    public function categories()
+    {
+        return $this->hasMany(TaskCategory::class);
+    }
+
+    public function taskStatus()
+    {
+        return $this->belongsTo(TaskStatus::class);
+    }
 }
