@@ -17,8 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('duration')->nullable();
             $table->date('due_date')->nullable();
-            $table->boolean('complete')->default(false);
-            $table->foreignId('task_status_id')->default(1);
+            $table->foreignId('status_id')->default(1);
             $table->timestamps();
         });
     }

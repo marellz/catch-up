@@ -21,8 +21,6 @@ class TaskController extends Controller
 
         $categories = Category::all();
 
-        // ddd($tasks);
-
         return view('welcome', [
             'tasks' => $tasks,
             'categories' => $categories
@@ -56,7 +54,7 @@ class TaskController extends Controller
         $duration = $request->duration_number * $request->duration_units;
 
         $request->merge([
-            'task_status_id' => 1,
+            'status_id' => 1,
             'due_date' => now()->addMinutes($duration ?? 60),
             'duration' => $duration,
         ]);
@@ -64,7 +62,7 @@ class TaskController extends Controller
         $query = $request->only([
             'name',
             'description',
-            'task_status_id',
+            'status_id',
             'due_date',
             'duration',
         ]);
@@ -110,12 +108,9 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         //
-        $complete = $request->task_status_id == 3;
+        $update = $request->only(['status_id']);
 
-        $task->update([
-            'complete' => $complete, 
-            'task_status_id' => $request->task_status_id,
-        ]);
+        $task->update($update);
 
         return redirect()->route('tasks');
     }

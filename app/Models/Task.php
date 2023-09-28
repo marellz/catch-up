@@ -14,8 +14,7 @@ class Task extends Model
         "description",
         "duration",
         "due_date",
-        "complete",
-        "task_status_id",
+        "status_id",
     ];
 
     protected $with = ['categories'];
@@ -26,8 +25,8 @@ class Task extends Model
         return $this->belongsToMany(Category::class, 'task_categories');
     }
 
-    public function taskStatus()
+    public function status()
     {
-        return $this->belongsTo(TaskStatus::class, 'task_status_id');
+        return $this->belongsTo(TaskStatus::class);
     }
 }

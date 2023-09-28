@@ -9,7 +9,7 @@
             </h1>
             <p class="mt-2 opacity-50">All your tasks.</p>
         </div>
-        <div class="grid lg:grid-cols-3 gap-10 mb-10">
+        <div class="grid lg:grid-cols-3 gap-10 mb-10 items-start">
             <div class="lg:col-span-2 px-4">
                 <form action="{{ route('tasks.create') }}" method="POST">
                     @csrf
@@ -61,12 +61,6 @@
                                         </div>
                                     @endforeach
                                 </div>
-                                {{-- <select id="task-category" class="p-2 w-full border bg-white border-grey rounded">
-                                    <option value="null">none</option>
-                                    <option value={{ $option->id }}>
-                                        {{$option->name}}
-                                    </option>
-                                </select> --}}
                             </div>
                             <div class="flex flex-col col-span-2">
                                 <label for="task-description" class="mb-2">Description</label>
@@ -93,9 +87,9 @@
                     <h1 class="text-xl font-semibold mb-6">Upcoming tasks</h1>
 
                     {{-- tasks loop --}}
-                    @forelse ($tasks->where('complete', false) as $task)
+                    @forelse ($tasks->where('status_id','<', 3) as $task)
                         <div
-                            class="bg-white shadow p-5 rounded border-l-4 @if($task->task_status_id == 1) border-light-blue @elseif($task->task_status_id == 2) border-blue-alt @endif ">
+                            class="bg-white shadow p-5 rounded border-l-4 @if($task->status_id == 1) border-light-blue @elseif($task->status_id == 2) border-blue-alt @endif ">
                             <div class="flex items-start xl:items-center">
                                 <div class="flex flex-col xl:flex-row items-start xl:items-center xl:flex-auto">
                                     <div class="flex space-x-3 items-center">
@@ -104,13 +98,13 @@
                                             <form action="{{ route('tasks.update', $task->id) }}" method="POST">
                                                 @method('patch')
                                             
-                                                @if($task->task_status_id < 3)
-                                                    <input type="hidden" name="task_status_id" value="{{ $task->task_status_id + 1}}" />
+                                                @if($task->status_id < 3)
+                                                    <input type="hidden" name="status_id" value="{{ $task->status_id + 1}}" />
                                                 @endif
 
                                                 @csrf
                                                 @php
-                                                    $current = $task->task_status_id;
+                                                    $current = $task->status_id;
                                                     
                                                     if ($current == 1) {
                                                         $states = collect(['Pending', 'Begin']);
@@ -122,16 +116,11 @@
                                                         $classes = 'border-blue-alt bg-blue-alt text-white hover:bg-green hover:border-green focus:bg-green focus:border-green';
                                                     }
                                                     
-                                                    else {
-                                                        $states = collect([]);
-                                                        $classes = '';
-                                                    }
-                                                    
                                                 @endphp
 
                                                 <button
                                                     class="overflow-hidden group border h-6 rounded-full inline-flex flex-col hover:text-white focus:outline-none  focus:text-white text-sm active:bg-transparent {{ $classes}}"
-                                                    @if ($task->task_status_id === 3) disabled @endif>
+                                                    @if ($task->status_id === 3) disabled @endif>
                                                     <div
                                                         class="px-3 flex flex-col h-4 w-full transform transition group-hover:-translate-y-6 group-focus:-translate-y-6 -mt-0.5">
                                                         @foreach ($states as $item)
@@ -219,7 +208,7 @@
             <div class="bg-white shadow rounded p-4 mx-4">
                 <h1 class="text-xl font-semibold mb-6">Completed tasks</h1>
 
-                @forelse ($tasks->where('complete', true) as $task)
+                @forelse ($tasks->where('status_id', 3) as $task)
                     <div class="border-b border-b-grey flex items-start">
                         <div class="flex-auto p-3">
                             <h1 class="font-medium text-green">
@@ -235,7 +224,7 @@
                             <form action="{{ route('tasks.update', $task->id) }}" method="POST">
                                 @method('patch')
                                 @csrf
-                                <input type="hidden" name="task_status_id" value="1" />
+                                <input type="hidden" name="status_id" value="1" />
                                 <button
                                     class="p-1 border border-transparent rounded hover:border hover:border-blue-alt hover:text-blue-alt">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
