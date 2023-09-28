@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Task;
 use App\Models\TaskStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,9 +18,9 @@ class TasksMeta extends Seeder
         //
 
         $statuses = [
-            'pending',
-            'in_progress',
-            'complete',
+            'Pending',
+            'In progress',
+            'Complete',
         ];
 
         $categories = [
@@ -27,6 +28,16 @@ class TasksMeta extends Seeder
             'work',
             'urgent',
             'important',
+        ];
+
+        $actionables = [
+            'Complete assignment',
+            'Make dinner',
+            'Do dishes',
+            'Pet the cat',
+            'Clean up my room',
+            'Fetch some groceries',
+            'Take out trash',
         ];
 
 
@@ -39,5 +50,13 @@ class TasksMeta extends Seeder
                 'name' => $status,
             ]);
         }
+
+        foreach ($actionables as $action) {
+            Task::factory()->create([
+                'name' => $action,
+            ]);
+        }
+
+
     }
 }
