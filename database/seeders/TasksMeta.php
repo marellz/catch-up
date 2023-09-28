@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\task\TaskStatus;
+use App\Models\TaskStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -31,12 +31,12 @@ class TasksMeta extends Seeder
 
 
         foreach ($categories as $category) {
-            Category::create(['name'=>$category]);
+            Category::create(['name' => $category]);
         }
 
         foreach ($statuses as $status) {
             TaskStatus::create([
-                'name'=>$status,
+                'name' => $status,
             ]);
         }
     }

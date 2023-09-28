@@ -32,7 +32,8 @@
                             <div class="flex flex-col">
                                 <label for="task-duration" class="mb-2">Duration</label>
                                 <div class="flex border border-grey rounded overflow-hidden">
-                                    <input type="number" id="task-duration" name="duration_number" value="10" class="p-2 flex-none w-1/2" />
+                                    <input type="number" id="task-duration" name="duration_number" value="10"
+                                        class="p-2 flex-none w-1/2" />
                                     <select id="task-duration" class="p-2 border-l bg-white border-grey flex-auto"
                                         name="duration_units" value="minutes">
                                         <option value="1">minutes</option>
@@ -94,17 +95,56 @@
                     {{-- tasks loop --}}
                     @forelse ($tasks->where('complete', false) as $task)
                         <div
-                            class="bg-white shadow p-5 rounded border-l-4 {{ $task->complete ? 'border-green opacity-50' : 'border-light-blue' }} ">
+                            class="bg-white shadow p-5 rounded border-l-4 @if($task->task_status_id == 1) border-light-blue @elseif($task->task_status_id == 2) border-blue-alt @endif ">
                             <div class="flex items-start xl:items-center">
                                 <div class="flex flex-col xl:flex-row items-start xl:items-center xl:flex-auto">
                                     <div class="flex space-x-3 items-center">
                                         <h1 class="text-xl font-medium">{{ $task->name }}</h1>
-                                        <span
-                                            class="inline-flex items-center pb-0.5 px-3 text-sm bg-dark-blue text-white rounded-full">{{ $task->taskStatus->name }}
-                                        </span>
+                                        <div class="">
+                                            <form action="{{ route('tasks.update', $task->id) }}" method="POST">
+                                                @method('patch')
+                                            
+                                                @if($task->task_status_id < 3)
+                                                    <input type="hidden" name="task_status_id" value="{{ $task->task_status_id + 1}}" />
+                                                @endif
 
+                                                @csrf
+                                                @php
+                                                    $current = $task->task_status_id;
+                                                    
+                                                    if ($current == 1) {
+                                                        $states = collect(['Pending', 'Begin']);
+                                                        $classes = 'hover:bg-blue-alt hover:border-blue-alt focus:bg-blue-alt focus:border-blue-alt';
+                                                    } // click this and form will mark as in_progress
+                                                    
+                                                    else if ($current == 2) {
+                                                        $states = collect(['In progress', 'Complete']);
+                                                        $classes = 'border-blue-alt bg-blue-alt text-white hover:bg-green hover:border-green focus:bg-green focus:border-green';
+                                                    }
+                                                    
+                                                    else {
+                                                        $states = collect([]);
+                                                        $classes = '';
+                                                    }
+                                                    
+                                                @endphp
+
+                                                <button
+                                                    class="overflow-hidden group border h-6 rounded-full inline-flex flex-col hover:text-white focus:outline-none  focus:text-white text-sm active:bg-transparent {{ $classes}}"
+                                                    @if ($task->task_status_id === 3) disabled @endif>
+                                                    <div
+                                                        class="px-3 flex flex-col h-4 w-full transform transition group-hover:-translate-y-6 group-focus:-translate-y-6 -mt-0.5">
+                                                        @foreach ($states as $item)
+                                                            <span class=" text-center h-6 leading-6">{{ $item }}</span>
+                                                        @endforeach
+                                                    </div>
+                                                </button>
+
+                                            </form>
+                                        </div>
+                                       
                                     </div>
-                                    <div class="flex space-x-4 mt-2 xl:ml-4 xl:mt-0">
+                                    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-2 xl:ml-4 xl:mt-0">
                                         <div class="inline-flex items-center space-x-2 text-blue-alt">
                                             {{-- clock --}}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -131,23 +171,6 @@
                                     </div>
                                 </div>
                                 <div class="flex space-x-2 md:py-0 ml-auto transform -translate-y-2">
-                                    <form action="{{ route('tasks.update', $task->id) }}" method="POST">
-                                        @method('patch')
-                                        <input type="hidden" name="complete" value="1" />
-                                        @csrf
-                                        <button
-                                            class="p-2 text-green disabled:opacity-4 hover:bg-green hover:text-white flex items-center space-x-1 rounded">
-                                            {{-- checkmark --}}
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M4.5 12.75l6 6 9-13.5" />
-                                            </svg>
-
-                                            <span class="hidden lg:inline">Complete</span>
-
-                                        </button>
-                                    </form>
 
                                     <form action="{{ route('tasks.destroy', $task->id) }}" method="POST">
                                         @method('delete')
@@ -167,21 +190,24 @@
                                 </div>
 
                             </div>
-                            @if (count($task->categories))
-                                <div class="py-1 flex flex-wrap">
+
+                            @if ($task->categories->count())
+                                <div class="py-4 md:py-2 flex flex-wrap">
                                     @foreach ($task->categories as $category)
                                         <span
                                             class="px-3 mb-2 mr-2 text-sm bg-light text-green rounded-full font-medium border-dark-blue">
-                                            {{ $category->category_id }}
+                                            {{ $category->name }}
                                         </span>
                                     @endforeach
                                 </div>
                             @endif
+                            @if($task->description)
                             <div>
                                 <p class="opacity-50 pt-2">
-                                    {{ $task->description ?? 'No description' }}
+                                    {{ $task->description }}
                                 </p>
                             </div>
+                            @endif
                         </div>
                     @empty
                         <div class="py-10 border rounded border-grey">
@@ -193,7 +219,7 @@
             <div class="bg-white shadow rounded p-4 mx-4">
                 <h1 class="text-xl font-semibold mb-6">Completed tasks</h1>
 
-                @foreach ($tasks->where('complete', true) as $task)
+                @forelse ($tasks->where('complete', true) as $task)
                     <div class="border-b border-b-grey flex items-start">
                         <div class="flex-auto p-3">
                             <h1 class="font-medium text-green">
@@ -209,7 +235,7 @@
                             <form action="{{ route('tasks.update', $task->id) }}" method="POST">
                                 @method('patch')
                                 @csrf
-                                <input type="hidden" name="complete" value="0" />
+                                <input type="hidden" name="task_status_id" value="1" />
                                 <button
                                     class="p-1 border border-transparent rounded hover:border hover:border-blue-alt hover:text-blue-alt">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -233,7 +259,11 @@
 
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="py-10 text-center text-light-blue border rounded">
+                        <p> Empty! </p>
+                    </div>
+                @endforelse
 
             </div>
         </div>

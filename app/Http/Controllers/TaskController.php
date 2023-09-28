@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\task\Task;
-use App\Models\task\TaskCategory;
+use App\Models\Task;
+use App\Models\TaskCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -18,7 +18,11 @@ class TaskController extends Controller
         //
 
         $tasks = Task::orderBy('complete')->get();
+
         $categories = Category::all();
+
+        // ddd($tasks);
+
         return view('welcome', [
             'tasks' => $tasks,
             'categories' => $categories
@@ -41,8 +45,6 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         //
-
-
 
         $request->validate([
             'name' => 'required|string',
@@ -80,6 +82,8 @@ class TaskController extends Controller
             }
         }
 
+        
+
         return redirect()->route('tasks');
     }
 
@@ -106,16 +110,11 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         //
-        if($request->has('complete')){
-            $complete = !!$request->complete;
-            $taskStatus = $complete ? 3 : 2;
-        } else {
-            $taskStatus = $task->task_status_id;
-        }
+        $complete = $request->task_status_id == 3;
 
         $task->update([
-            'complete' => $request->complete, 
-            'task_status_id' => $taskStatus
+            'complete' => $complete, 
+            'task_status_id' => $request->task_status_id,
         ]);
 
         return redirect()->route('tasks');
