@@ -4,7 +4,7 @@
     <header class="py-4">
         <div class="container mx-auto px-4 flex items-center">
             <div class="flex-auto">
-                <a href="{{ route('tasks') }}" class="font-bold text-dark-blue">Catchup.</a>
+                <a href="{{ route('home') }}" class="font-bold text-dark-blue">Catchup.</a>
             </div>
             <div class="flex space-x-4 lg:pr-10">
                 @auth

@@ -18,21 +18,26 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/', [TaskController::class, 'index'])->name('tasks');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::prefix('tasks')->name('tasks.')->group(function () {
-    Route::post('/create', [TaskController::class, 'store'])->name('create');
-    Route::patch('/update/{task}', [TaskController::class, 'update'])->name('update');
-    Route::delete('/destroy/{task}', [TaskController::class, 'destroy'])->name('destroy');
+Route::middleware('auth')->group(function () {
+    
+    Route::prefix('/dashboard')->name('dash.')->group(function () {
+        Route::get('/', [TaskController::class, 'index'])->name('tasks');
+    });
+
+    # POST requests
+    Route::prefix('tasks')->name('tasks.')->group(function () {
+        Route::post('/create', [TaskController::class, 'store'])->name('create');
+        Route::patch('/update/{task}', [TaskController::class, 'update'])->name('update');
+        Route::delete('/destroy/{task}', [TaskController::class, 'destroy'])->name('destroy');
+    });
 });
 
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 
-Route::prefix('/dashboard')->name('dash.')->group(function() {
-    Route::get('/', [HomeController::class, 'index']);
-});
 
 
 
@@ -40,4 +45,4 @@ Route::prefix('/dashboard')->name('dash.')->group(function() {
 //     return ['Laravel' => app()->version()];
 // });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
