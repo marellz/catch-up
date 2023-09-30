@@ -1,4 +1,4 @@
-@props(['name' => '', 'label' => 'Label', 'type' => 'text'])
+@props(['name' => '', 'label' => 'Label', 'type' => 'text', 'errors'=> collect([])])
 
 
 @php

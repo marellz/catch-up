@@ -20,6 +20,8 @@
                         <x-button class="w-full">
                             <span>Register</span>
                         </x-button>
+                        
+                        <p class="block text-sm">Already have an account? <a class=" text-blue-alt" href="{{ route('login')}}">Log in</a> </p>
                     </div>
                 </form>
             </div>

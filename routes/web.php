@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::get('/recover-password', [AuthController::class, 'recovery'])->name('recovery');
+Route::get('/password-reset/{token}', [AuthController::class, 'resetPassword'])->name('password-reset');
 
 
 

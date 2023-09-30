@@ -17,4 +17,14 @@ class AuthController extends Controller
     {
         return view('auth.register');
     }
+
+    public function recovery()
+    {
+        return view('auth.recovery');
+    }
+
+    public function resetPassword($token)
+    {
+        return view('auth.password-reset', ['token'=>$token]);
+    }
 }
