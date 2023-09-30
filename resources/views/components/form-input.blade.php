@@ -16,9 +16,3 @@
         <span class="text-red mt-1 text-sm">{{ $errors->first($name) }}</span>
     @endif
 </div>
-{{-- <div class="flex flex-col">
-    <label for="{{ $id }}">
-        {{ $label }}
-    </label>
-    <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}" class="" />
-</div> --}}
