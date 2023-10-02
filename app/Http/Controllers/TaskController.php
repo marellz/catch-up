@@ -37,7 +37,7 @@ class TaskController extends Controller
     {
         //
 
-        return redirect()->route('tasks');
+        return redirect()->route('dash.tasks');
     }
 
     /**
@@ -85,7 +85,7 @@ class TaskController extends Controller
 
 
 
-        return redirect()->route('tasks');
+        return redirect()->route('dash.tasks');
     }
 
     /**
@@ -102,7 +102,7 @@ class TaskController extends Controller
     public function edit(Task $task)
     {
         //
-        return redirect()->route('tasks');
+        return redirect()->route('dash.tasks');
     }
 
     /**
@@ -115,7 +115,7 @@ class TaskController extends Controller
 
         $task->update($update);
 
-        return redirect()->route('tasks');
+        return redirect()->route('dash.tasks');
     }
 
     /**
@@ -127,7 +127,7 @@ class TaskController extends Controller
 
         $task->delete();
 
-        return redirect()->route('tasks');
+        return redirect()->route('dash.tasks');
     }
 
 }
