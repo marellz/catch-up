@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Task;
 use App\Models\TaskCategory;
+use App\Models\TaskUser;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -16,17 +19,27 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function __construct()
+    {
+      $this->middleware('auth');  
+    }
+
     public function index()
     {
         //
 
-        $tasks = Task::orderBy('complete')->get();
+        $tasks = Auth::user()->tasks->sortBy('complete');
+        $assigned = Auth::user()->assigned;
+        $contacts = User::all();
 
         $categories = Category::all();
 
         return view('dashboard', [
             'tasks' => $tasks,
-            'categories' => $categories
+            'assigned' => $assigned,
+            'categories' => $categories,
+            'contacts'  => $contacts
         ]);
     }
 
@@ -57,6 +70,7 @@ class TaskController extends Controller
         $duration = $request->duration_number * $request->duration_units;
 
         $request->merge([
+            'user_id' => Auth::id(),
             'status_id' => 1,
             'due_date' => now()->addMinutes($duration ?? 60),
             'duration' => $duration,
@@ -68,6 +82,7 @@ class TaskController extends Controller
             'status_id',
             'due_date',
             'duration',
+            'user_id',
         ]);
 
         // return response($query);
@@ -83,6 +98,16 @@ class TaskController extends Controller
             }
         }
 
+        if ($request->has('assignees')) {
+            foreach ($request->assignees as $assignee) {
+                TaskUser::create([
+                    'user_id'=>$assignee,
+                    'task_id' => $task->id
+                ]);
+
+                // send notifications!
+            }
+        }
 
 
         return redirect()->route('dash.tasks');
@@ -124,6 +149,8 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         //
+
+        TaskUser::where('task_id', $task->id)->delete();
 
         $task->delete();
 

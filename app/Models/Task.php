@@ -15,6 +15,7 @@ class Task extends Model
         "duration",
         "due_date",
         "status_id",
+        "user_id", // created                                                                                                                                      
     ];
 
     protected $with = ['categories'];
@@ -28,5 +29,15 @@ class Task extends Model
     public function status()
     {
         return $this->belongsTo(TaskStatus::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function assignees()
+    {
+        return $this->belongsToMany(User::class, 'task_users');
     }
 }

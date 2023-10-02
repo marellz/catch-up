@@ -72,23 +72,6 @@
                 </div>
             </div>
         </div>
-        <div class="flex space-x-2 md:py-0 ml-auto transform -translate-y-2 lg:-translate-y-0">
-            <form action="{{ route('tasks.destroy', $task->id) }}" method="POST">
-                @method('delete')
-                @csrf
-                <x-button color="text-red hover:bg-red hover:text-white">
-
-                    {{-- trash --}}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>
-                    <span class="hidden lg:inline">Delete</span>
-                </x-button>
-            </form>
-        </div>
-
     </div>
 
     @if ($task->categories->count())
@@ -108,23 +91,30 @@
         </div>
     @endif
 
-    @if($task->assignees->count())
-    <div class="my-2">
-        <div class="flex">
-            @foreach ($task->assignees as $user)
-                <div class="flex items-center space-x-2 me-3 mb-3 text-dark-blue">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                        <path fill-rule="evenodd"
-                            d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                            clip-rule="evenodd" />
-                    </svg>
+    @php
+        $assignees = $task->assignees->where('id', '!=', Auth::id());
+    @endphp
 
-                    <span class="">
-                        {{ $user->name }}
-                    </span>
+    <div class="bg-light px-4 py-2 rounded mt-10 flex">
+        <div class="flex flex-col md:flex-row">
+            <div class="flex flex-col">
+                <h1 class="mb-3"> By: </h1>
+                <div class="flex">
+                   <x-user-tag :user="$task->creator"/>
                 </div>
-            @endforeach
+            </div>
+            <div class="flex flex-col md:border-l border-l-grey md:pl-4">
+                <h1 class="mb-3"> To: </h1>
+                <div class="flex flex-col xl:flex-row">
+                    <x-user-tag :user="Auth::user()" />
+                    @if ($assignees)
+                        @foreach ($assignees as $user)
+                            <x-user-tag :user="$user"/>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
-    @endif
+
 </div>

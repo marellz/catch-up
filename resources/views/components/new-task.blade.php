@@ -1,4 +1,4 @@
-@props(['categories' => [] ])
+@props(['categories' => collect([]), 'contacts' => collect([]) ])
 
 <form action="{{ route('tasks.create') }}" method="POST">
     @csrf
@@ -29,7 +29,7 @@
             </div>
 
             <div class="flex flex-col col-span-2">
-                <label class="mb-2">Category</label>
+                <label class="mb-2">Categories</label>
 
                 <div class="flex flex-wrap">
 
@@ -38,6 +38,21 @@
                             <input type="checkbox" name="categories[]" id="task-category-{{ $option->id }}"
                                 value={{ $option->id }} />
                             <label for="task-category-{{ $option->id }}">{{ $option->name }}</label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="flex flex-col col-span-2">
+                <label class="mb-2">Assign task</label>
+
+                <div class="flex flex-wrap">
+
+                    @foreach ($contacts as $option)
+                        <div class="mb-2 mr-2">
+                            <input type="checkbox" name="assignees[]" id="task-assignee-{{ $option->id }}"
+                                value={{ $option->id }} />
+                            <label for="task-assignee-{{ $option->id }}">{{ $option->name }}</label>
                         </div>
                     @endforeach
                 </div>
