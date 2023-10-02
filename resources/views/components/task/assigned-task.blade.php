@@ -100,16 +100,16 @@
             <div class="flex flex-col">
                 <h1 class="mb-3"> By: </h1>
                 <div class="flex">
-                   <x-user-tag :user="$task->creator"/>
+                   <x-partials.user-tag :user="$task->creator"/>
                 </div>
             </div>
             <div class="flex flex-col md:border-l border-l-grey md:pl-4">
                 <h1 class="mb-3"> To: </h1>
                 <div class="flex flex-col xl:flex-row">
-                    <x-user-tag :user="Auth::user()" />
+                    <x-partials.user-tag :user="Auth::user()" />
                     @if ($assignees)
                         @foreach ($assignees as $user)
-                            <x-user-tag :user="$user"/>
+                            <x-partials.user-tag :user="$user"/>
                         @endforeach
                     @endif
                 </div>
