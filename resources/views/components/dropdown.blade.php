@@ -11,7 +11,7 @@
         </svg>
     </button>
 
-    <div class="flex flex-col border border-grey rounded absolute top-full transform translate-y-2 bg-white min-w-full z-20 max-h-[250px] overflow-auto" x-show="open">
+    <div class="flex flex-col border border-grey rounded absolute top-full transform translate-y-2 bg-white min-w-full z-20 max-h-[250px] overflow-auto right-0" x-show="open">
         {{ $slot }}
     </div>
 </div>

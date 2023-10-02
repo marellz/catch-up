@@ -50,16 +50,18 @@
                     @endforelse
                 </div>
             </div>
-            <div class="bg-white shadow rounded p-4 mx-4">
-                <h1 class="text-xl font-semibold mb-6">Completed tasks</h1>
-
-                @forelse ($tasks->where('status_id', 3) as $task)
-                    <x-task.completed-task :task="$task" />
-                @empty
-                    <div class="py-10 text-center text-light-blue border rounded">
-                        <p> Empty! </p>
-                    </div>
-                @endforelse
+            <div class="px-4 lg:px-0">
+                <div class="bg-white shadow rounded p-4">
+                    <h1 class="text-xl font-semibold mb-6">Completed tasks</h1>
+    
+                    @forelse ($tasks->where('status_id', 3) as $task)
+                        <x-task.completed-task :task="$task" />
+                    @empty
+                        <div class="py-10 text-center text-light-blue border rounded">
+                            <p> Empty! </p>
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
     @endsection

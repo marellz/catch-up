@@ -5,9 +5,9 @@
     <div class="bg-white shadow rounded p-5">
         <h1 class="text-xl font-semibold mb-6">Add a new task</h1>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid lg:grid-cols-2 gap-4">
 
-            <x-form-input label="Task name" name="name" />
+            <x-form-input label="Task name" name="name" class="lg:col-span-2" />
 
             <div class="flex flex-col">
                 <label for="task-duration" class="mb-2">Duration</label>
@@ -28,37 +28,39 @@
                     value="{{ now()->addDay() }}" id="task-due" />
             </div>
 
+            <div class="">
+                <x-dropdown label="Categories">
+                    @foreach ($categories as $option)
+                        <div class="flex px-2 hover:bg-grey">
+                            <input type="checkbox" name="categories[]" id="task-category-{{ $option->id }}"
+                                value={{ $option->id }} />
+                            <label class="py-2 flex-auto px-2" for="task-category-{{ $option->id }}">
+                                {{ $option->name }}</label>
+                        </div>
+                    @endforeach
+                </x-dropdown>
+                
+            </div>
 
-            <x-dropdown label="Categories">
-                @foreach ($categories as $option)
-                    <div class="flex px-2 hover:bg-grey">
-                        <input type="checkbox" name="categories[]" id="task-category-{{ $option->id }}"
-                            value={{ $option->id }} />
-                        <label class="py-2 flex-auto px-2" for="task-category-{{ $option->id }}">
-                            {{ $option->name }}</label>
-                    </div>
-                @endforeach
-            </x-dropdown>
+            <div class="">
+                <x-dropdown label="Assignees">
+                    @foreach ($contacts as $option)
+                       <div class="flex px-2 hover:bg-grey">
+                           <input type="checkbox" name="assignees[]" id="task-assignee-{{ $option->id }}"
+                               value={{ $option->id }} />
+                           <label class="py-2 flex-auto px-2" for="task-assignee-{{ $option->id }}">
+                               {{ $option->name }}</label>
+                       </div>
+                   @endforeach
+               </x-dropdown>
+            </div>
 
-             <x-dropdown label="Assignees">
-                 @foreach ($contacts as $option)
-                    <div class="flex px-2 hover:bg-grey">
-                        <input type="checkbox" name="assignees[]" id="task-assignee-{{ $option->id }}"
-                            value={{ $option->id }} />
-                        <label class="py-2 flex-auto px-2" for="task-assignee-{{ $option->id }}">
-                            {{ $option->name }}</label>
-                    </div>
-                @endforeach
-            </x-dropdown>
-
-
-            
-            <div class="flex flex-col col-span-2">
+            <div class="flex flex-col lg:col-span-2">
                 <label for="task-description" class="mb-2">Description</label>
                 <textarea class="p-2 w-full border border-grey rounded" name="description" id="task-description"></textarea>
             </div>
 
-            <div class="col-span-2 text-end">
+            <div class="text-end lg:col-span-2">
                 <x-button>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">

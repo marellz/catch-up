@@ -1,4 +1,4 @@
-@props(['name' => '', 'label' => 'Label', 'type' => 'text', 'errors'=> collect([])])
+@props(['name' => '', 'label' => 'Label', 'type' => 'text', 'errors' => collect([])])
 
 
 @php
@@ -6,7 +6,9 @@
 @endphp
 
 
-<div class="flex flex-col col-span-2">
+<div {{ $attributes->merge([
+    'class' => 'flex flex-col',
+]) }}>
     <label for="{{ $id }}" class="mb-2">{{ $label }} </label>
     <input type="{{ $type }}"
         class="p-2 rounded w-full border  {{ $errors->has($name) ? 'border-red' : 'border-grey' }}"

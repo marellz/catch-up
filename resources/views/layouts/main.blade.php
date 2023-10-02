@@ -21,7 +21,7 @@
                                 $user = Auth::user();
                             @endphp
 
-                            <span>
+                            <span class="hidden lg:visible">
                                 {{ $user->name }}
                             </span>
 
@@ -29,7 +29,7 @@
                         </button>
 
                         {{-- menu --}}
-                        <div class="flex flex-col border border-grey bg-white min-w-full shadow rounded py-2 absolute top-full transform translate-y-2"
+                        <div class="flex flex-col border border-grey bg-white min-w-full shadow rounded py-2 absolute top-full transform translate-y-2 right-0 lg:right-unset lg:left-0"
                             x-show="open">
                             <a href="#profile" class="flex items-center space-x-2 px-4 py-2 hover:bg-dark-blue hover:text-white w-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
