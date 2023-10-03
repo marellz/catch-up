@@ -109,8 +109,8 @@
     @endif
 
     @if($task->assignees->count())
-    <div class="my-2">
-        <div class="flex">
+    <div class="my-5">
+        <div class="flex flex-col md:flex-row md:flex-wrap">
             @foreach ($task->assignees as $user)
                 <div class="flex items-center space-x-2 me-3 mb-3 text-dark-blue">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
