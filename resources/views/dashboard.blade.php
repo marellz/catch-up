@@ -8,7 +8,7 @@
     {{ $user = Auth::user(); }}
 @endphp
 @section('content')
-    <div class="container mx-auto md:py-20">
+    <x-container>
         {{-- title --}}
         <div class="p-4">
             <h1 class="text-3xl">
@@ -64,4 +64,5 @@
                 </div>
             </div>
         </div>
+    </x-container>
     @endsection

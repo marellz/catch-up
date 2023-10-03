@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="container mx-auto md:py-20">
+    <x-container>
         <div class="flex justify-center">
             <div class="w-[500px] p-5 bg-white rounded shadow">
                 <h1 class="text-4xl font-medium">
@@ -33,5 +33,5 @@
                 </form>
             </div>
         </div>
-    </div>
+    </x-container>
 @endsection

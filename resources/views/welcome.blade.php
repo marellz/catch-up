@@ -4,7 +4,7 @@
     Home
 @endsection
 @section('content')
-    <div class="container mx-auto py-20 px-5">
+    <x-container>
         <div class="grid xl:grid-cols-3">
             <div class="xl:col-span-2 py-20 flex flex-col items-center">
                 <h1 class="font-bold text-4xl lg:text-[4vw] text-center">Welcome to <span class="text-blue-alt">Catchup.</span> </h1>
@@ -38,5 +38,5 @@
                 <img src="{{ Vite::asset('resources/illustrations/undraw-choose.svg') }}" class="w-96 inline" />
             </div>
         </div>
-    </div>
+    </x-container>
 @endsection
