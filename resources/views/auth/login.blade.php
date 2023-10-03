@@ -36,5 +36,5 @@
                 </form>
             </div>
         </div>
-    </div>
+    </x-container>
 @endsection
