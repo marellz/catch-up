@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,6 +25,7 @@ class TaskFactory extends Factory
             "duration" => $this->faker->numberBetween(1, 9) * 10,
             "due_date" => now()->addHours($this->faker->randomNumber(1,24)),
             "status_id" => $complete ? 3 : $this->faker->numberBetween(1,2),
+            "user_id" => User::inRandomOrder()->first(),
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Task;
 use App\Models\TaskStatus;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -40,7 +41,6 @@ class TasksMeta extends Seeder
             'Take out trash',
         ];
 
-
         foreach ($categories as $category) {
             Category::create(['name' => $category]);
         }
@@ -52,11 +52,11 @@ class TasksMeta extends Seeder
         }
 
         foreach ($actionables as $action) {
+            $id = User::inRandomOrder()->first()->id;
             Task::factory()->create([
                 'name' => $action,
+                'user_id' => $id,
             ]);
         }
-
-
     }
 }
