@@ -3,9 +3,10 @@
 <form action="{{ route('tasks.create') }}" method="POST">
     @csrf
 
-    <div class="bg-white shadow rounded p-5" x-data="{ open: {{ $errors->count() }}, more: false }">
+    {{-- {{ $errors->count() }} --}}
+    <div class="bg-white shadow rounded p-5" x-data="{ open: true, more: true }">
 
-        <button type="button" class="flex items-center w-full text-left" @click="open=!open">
+        <button type="button" class="flex items-center w-full text-left" @click="open = !open">
             <h1 class="flex-auto text-xl font-semibold">Add a new task</h1>
             <x-icons.plus />
         </button>
@@ -29,8 +30,35 @@
             </div>
             <div class="flex flex-col">
                 <label for="task-due" class="mb-2">Due date</label>
-                <input type="date" class="px-2 py-1.5 rounded w-full border border-grey" name="due_date"
-                    value="{{ now()->addDay() }}" id="task-due" />
+                <div class="flex border border-grey rounded overflow-hidden">
+                    <input type="date" class="px-2 py-1.5 rounded w-full" name="due_date"
+                        value="{{ today()->addDay()->format('Y-m-d') }}" id="task-due" />
+
+                    <select class="p-2 border-l bg-white border-grey flex-auto outline-none" name="due_date_hours">
+                        @foreach (range(1, 12) as $item)
+                            <option value="{{ $item }}" @if($item == 8) selected @endif>
+                                {{ $item }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <select class="p-2 border-l bg-white border-grey flex-auto outline-none" name="due_date_minutes">
+                        <option value="00">
+                            00
+                        </option>
+                        @foreach (range(1, 5) as $item)
+                            <option value="{{ $item * 10 }}">
+                                {{ $item * 10 }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <select class="p-2 border-l bg-white border-grey flex-auto outline-none" name="due_date_meridiem">
+                        @foreach (['AM', 'PM'] as $item)
+                            <option value="{{ $item }}">
+                                {{ $item }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -41,7 +69,7 @@
             </button>
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-4 mt-6 pb-2" x-show="more">
+        <div class="grid lg:grid-cols-2 gap-4 mt-6 pb-2" x-show="more && open">
             <div class="">
                 <x-dropdown label="Categories">
                     @foreach ($categories as $option)

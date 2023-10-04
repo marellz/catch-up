@@ -1,11 +1,11 @@
 @props(['task'])
 
 <div
-    class="bg-white shadow p-5 rounded border-l-4 @if ($task->status_id == 1) border-light-blue @elseif($task->status_id == 2) border-blue-alt @endif ">
+    class="bg-white shadow p-5 rounded border-l-4 @if ($task->overdue) border-red  @elseif ($task->status_id == 1) border-light-blue @elseif($task->status_id == 2) border-blue-alt @endif ">
     <div class="flex items-start lg:items-center">
         <div class="flex flex-col xl:flex-row items-start xl:items-center xl:flex-auto">
             <div class="flex space-x-3 items-center">
-                <h1 class="text-xl font-medium">{{ $task->name }}</h1>
+                <h1 class="text-xl font-medium text-dark-blue">{{ $task->name }}</h1>
                 <div class="">
                     <form action="{{ route('tasks.update', $task->id) }}" method="POST">
                         @method('patch')
@@ -51,14 +51,14 @@
                     {{-- clock --}}
                     <x-icons.clock />
                     <span>
-                        {{ $task->duration }} min
+                        {{ $task->duration }}
                     </span>
                 </div>
-                <div class="inline-flex items-center space-x-2 text-blue-alt">
+                <div class="inline-flex items-center space-x-2 {{ $task->overdue ? 'text-red' : ' text-blue-alt' }}">
 
                     {{-- calendar --}}
                     <x-icons.calendar />
-                    <span>
+                    <span title="{{ $task->due_date_diff }}">
                         {{ $task->due_date }}
                     </span>
                 </div>
@@ -96,22 +96,22 @@
         </div>
     @endif
 
-    @if($task->assignees->count())
-    <div class="my-5">
-        <div class="bg-light px-4 pt-3 rounded">
-            <h1 class="mb-3"> Assigned to </h1>
-            <div class="flex flex-col md:flex-row md:flex-wrap">
-                @foreach ($task->assignees as $user)
-                    <div class="flex items-center space-x-2 me-3 mb-3 text-dark-blue">
-                        <x-icons.user />
-    
-                        <span class="">
-                            {{ $user->name }}
-                        </span>
-                    </div>
-                @endforeach
+    @if ($task->assignees->count())
+        <div class="my-5">
+            <div class="bg-light px-4 pt-3 rounded">
+                <h1 class="mb-3"> Assigned to </h1>
+                <div class="flex flex-col md:flex-row md:flex-wrap">
+                    @foreach ($task->assignees as $user)
+                        <div class="flex items-center space-x-2 me-3 mb-3 text-dark-blue">
+                            <x-icons.user />
+
+                            <span class="">
+                                {{ $user->name }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
-    </div>
     @endif
 </div>

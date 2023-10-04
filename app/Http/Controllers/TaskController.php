@@ -7,6 +7,8 @@ use App\Models\Task;
 use App\Models\TaskCategory;
 use App\Models\TaskUser;
 use App\Models\User;
+use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,25 +24,40 @@ class TaskController extends Controller
 
     public function __construct()
     {
-      $this->middleware('auth');  
+        $this->middleware('auth');
     }
 
     public function index()
     {
         //
 
-        $tasks = Auth::user()->tasks->sortBy('complete');
-        $assigned = Auth::user()->assigned;
+        $user = Auth::user();
+        $tasks = $user->tasks->sortBy('due_date');
+        $assigned = $user->assigned;
+
+        foreach (collect([])->merge($tasks)->merge($assigned) as $task) {
+
+            $task->duration = CarbonInterval::minutes($task->duration)->cascade();
+
+            $due = new Carbon($task->due_date);
+            $task->due_date = ''.$due->format('Y-m-d, h:i A');
+            $task->due_date_diff = $due->diffForHumans();
+            $task->overdue = now() > $due;
+
+        }
+
         $contacts = User::all();
 
         $categories = Category::all();
-
-        return view('dashboard', [
+        $data = [
             'tasks' => $tasks,
             'assigned' => $assigned,
             'categories' => $categories,
-            'contacts'  => $contacts
-        ]);
+            'contacts' => $contacts,
+            'user' => $user,
+        ];
+
+        return view('dashboard', $data);
     }
 
     /**
@@ -64,15 +81,22 @@ class TaskController extends Controller
             'name' => 'required|string',
             'description' => 'string|nullable',
             'duration_number' => 'nullable|integer',
-            'duration_units' => 'nullable|integer'
+            'duration_units' => 'nullable|integer',
+            'due_date' => 'date|nullable',
         ]);
 
         $duration = $request->duration_number * $request->duration_units;
 
+        $date = new Carbon($request->due_date);
+
+        $due_date = $date
+            ->hour($request->due_date_meridiem == 'PM' ? intval($request->due_date_hours) + 12  : $request->due_date_hours)
+            ->minute($request->due_date_minutes);
+
         $request->merge([
             'user_id' => Auth::id(),
             'status_id' => 1,
-            'due_date' => now()->addMinutes($duration ?? 60),
+            'due_date' => $due_date,
             'duration' => $duration,
         ]);
 
@@ -101,7 +125,7 @@ class TaskController extends Controller
         if ($request->has('assignees')) {
             foreach ($request->assignees as $assignee) {
                 TaskUser::create([
-                    'user_id'=>$assignee,
+                    'user_id' => $assignee,
                     'task_id' => $task->id
                 ]);
 
@@ -156,5 +180,4 @@ class TaskController extends Controller
 
         return redirect()->route('dash.tasks');
     }
-
 }
